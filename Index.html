@@ -1,0 +1,1303 @@
+```html
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>सेकंड हैंड मोबाइल खरीद-बिक्री व केवाईसी रजिस्टर</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Google Fonts Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Noto+Sans+Devanagari:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'Noto Sans Devanagari', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              50: '#eff6ff',
+              100: '#dbeafe',
+              500: '#3b82f6',
+              600: '#2563eb',
+              700: '#1d4ed8',
+              800: '#1e40af',
+              900: '#1e3a8a',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body {
+      font-family: 'Inter', 'Noto Sans Devanagari', sans-serif;
+      background-color: #f8fafc;
+    }
+    
+    /* Print specific styling for Police/Store Records */
+    @media print {
+      body * {
+        visibility: hidden;
+      }
+      #printArea, #printArea * {
+        visibility: visible;
+      }
+      #printArea {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        margin: 0;
+        padding: 20px;
+        background: #fff;
+        color: #000;
+      }
+      .no-print {
+        display: none !important;
+      }
+    }
+
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #f1f5f9;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #94a3b8;
+    }
+  </style>
+</head>
+<body class="text-slate-800 antialiased min-h-screen flex flex-col">
+
+  <!-- Header Navigation -->
+  <header class="bg-slate-900 text-white sticky top-0 z-30 shadow-lg border-b border-slate-800">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex flex-wrap justify-between items-center gap-3">
+      <div class="flex items-center space-x-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center text-white shadow-md shadow-blue-500/20">
+          <i class="fa-solid fa-mobile-screen-button text-xl"></i>
+        </div>
+        <div>
+          <h1 class="text-lg sm:text-xl font-bold tracking-tight text-white flex items-center gap-2">
+            स्मार्टफोन रजिस्टर <span class="text-xs bg-blue-500/20 text-blue-300 font-semibold px-2 py-0.5 rounded border border-blue-400/30">KYC Portal</span>
+          </h1>
+          <p class="text-xs text-slate-400">सेकंड हैंड मोबाइल खरीद-बिक्री व वैधानिक रिकॉर्ड</p>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="flex items-center space-x-2">
+        <button onclick="exportToCSV()" class="px-3.5 py-2 text-xs sm:text-sm font-medium text-slate-300 bg-slate-800 hover:bg-slate-700 hover:text-white rounded-lg transition border border-slate-700 flex items-center gap-2">
+          <i class="fa-solid fa-file-excel text-emerald-400"></i>
+          <span class="hidden sm:inline">बैकअप (CSV)</span>
+        </button>
+        <button onclick="openPurchaseModal()" class="px-4 py-2 text-xs sm:text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 active:scale-95 rounded-lg shadow-md shadow-blue-600/30 transition flex items-center gap-2">
+          <i class="fa-solid fa-plus"></i>
+          <span>नई खरीद दर्ज करें</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content Area -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+
+    <!-- KPI / Metric Cards -->
+    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">
+      <div class="bg-white p-4 rounded-xl border border-slate-200/80 shadow-sm flex flex-col justify-between">
+        <div class="flex justify-between items-start">
+          <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">कुल खरीदे</span>
+          <span class="p-1.5 bg-blue-50 text-blue-600 rounded-lg text-xs"><i class="fa-solid fa-boxes-stacked"></i></span>
+        </div>
+        <div class="mt-2">
+          <h3 id="statTotalPhones" class="text-xl sm:text-2xl font-bold text-slate-900">0</h3>
+          <p class="text-[11px] text-slate-400 font-medium">कुल प्रविष्टियाँ</p>
+        </div>
+      </div>
+
+      <div class="bg-white p-4 rounded-xl border border-slate-200/80 shadow-sm flex flex-col justify-between">
+        <div class="flex justify-between items-start">
+          <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">स्टॉक में उपलब्ध</span>
+          <span class="p-1.5 bg-amber-50 text-amber-600 rounded-lg text-xs"><i class="fa-solid fa-warehouse"></i></span>
+        </div>
+        <div class="mt-2">
+          <h3 id="statInStock" class="text-xl sm:text-2xl font-bold text-amber-600">0</h3>
+          <p class="text-[11px] text-slate-400 font-medium">बिक्री हेतु तैयार</p>
+        </div>
+      </div>
+
+      <div class="bg-white p-4 rounded-xl border border-slate-200/80 shadow-sm flex flex-col justify-between">
+        <div class="flex justify-between items-start">
+          <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">बिके हुए फोन</span>
+          <span class="p-1.5 bg-emerald-50 text-emerald-600 rounded-lg text-xs"><i class="fa-solid fa-circle-check"></i></span>
+        </div>
+        <div class="mt-2">
+          <h3 id="statSold" class="text-xl sm:text-2xl font-bold text-emerald-600">0</h3>
+          <p class="text-[11px] text-slate-400 font-medium">ग्राहक को सुपुर्द</p>
+        </div>
+      </div>
+
+      <div class="bg-white p-4 rounded-xl border border-slate-200/80 shadow-sm flex flex-col justify-between">
+        <div class="flex justify-between items-start">
+          <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">कुल खरीद लागत</span>
+          <span class="p-1.5 bg-indigo-50 text-indigo-600 rounded-lg text-xs"><i class="fa-solid fa-indian-rupee-sign"></i></span>
+        </div>
+        <div class="mt-2">
+          <h3 id="statTotalInvestment" class="text-xl sm:text-2xl font-bold text-slate-800">₹0</h3>
+          <p class="text-[11px] text-slate-400 font-medium">इन्वेस्टमेंट</p>
+        </div>
+      </div>
+
+      <div class="bg-white p-4 rounded-xl border border-slate-200/80 shadow-sm flex flex-col justify-between">
+        <div class="flex justify-between items-start">
+          <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">कुल बिक्री</span>
+          <span class="p-1.5 bg-cyan-50 text-cyan-600 rounded-lg text-xs"><i class="fa-solid fa-receipt"></i></span>
+        </div>
+        <div class="mt-2">
+          <h3 id="statTotalSales" class="text-xl sm:text-2xl font-bold text-slate-800">₹0</h3>
+          <p class="text-[11px] text-slate-400 font-medium">सेल रेवेन्यू</p>
+        </div>
+      </div>
+
+      <div class="bg-white p-4 rounded-xl border border-slate-200/80 shadow-sm flex flex-col justify-between">
+        <div class="flex justify-between items-start">
+          <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">शुद्ध मुनाफा</span>
+          <span class="p-1.5 bg-teal-50 text-teal-600 rounded-lg text-xs"><i class="fa-solid fa-chart-line"></i></span>
+        </div>
+        <div class="mt-2">
+          <h3 id="statTotalProfit" class="text-xl sm:text-2xl font-bold text-teal-600">₹0</h3>
+          <p class="text-[11px] text-slate-400 font-medium">नेट प्रॉफिट</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Filters & Search Toolbar -->
+    <div class="bg-white p-4 rounded-xl border border-slate-200/80 shadow-sm flex flex-col sm:flex-row justify-between items-center gap-3">
+      <!-- Search Input -->
+      <div class="relative w-full sm:w-80">
+        <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400 pointer-events-none">
+          <i class="fa-solid fa-magnifying-glass text-sm"></i>
+        </span>
+        <input 
+          type="text" 
+          id="searchInput" 
+          onkeyup="renderInventoryTable()"
+          placeholder="IMEI, मॉडल, विक्रेता या खरीदार खोजें..." 
+          class="w-full pl-9 pr-3 py-2 text-sm bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition"
+        >
+      </div>
+
+      <!-- Segment Tabs -->
+      <div class="flex bg-slate-100 p-1 rounded-lg w-full sm:w-auto text-xs sm:text-sm font-medium">
+        <button onclick="setFilter('all')" id="tabAll" class="flex-1 sm:flex-none px-4 py-1.5 rounded-md bg-white text-slate-900 shadow-sm font-semibold transition">
+          सभी (All)
+        </button>
+        <button onclick="setFilter('stock')" id="tabStock" class="flex-1 sm:flex-none px-4 py-1.5 rounded-md text-slate-600 hover:text-slate-900 transition">
+          स्टॉक में (In Stock)
+        </button>
+        <button onclick="setFilter('sold')" id="tabSold" class="flex-1 sm:flex-none px-4 py-1.5 rounded-md text-slate-600 hover:text-slate-900 transition">
+          बिक चुके (Sold)
+        </button>
+      </div>
+    </div>
+
+    <!-- Main Inventory Register Table -->
+    <div class="bg-white rounded-xl border border-slate-200/80 shadow-sm overflow-hidden">
+      <div class="overflow-x-auto">
+        <table class="w-full text-left border-collapse text-sm">
+          <thead>
+            <tr class="bg-slate-50/80 border-b border-slate-200 text-slate-600 text-xs uppercase font-semibold">
+              <th class="py-3.5 px-4">दिनांक / फोटो</th>
+              <th class="py-3.5 px-4">फोन विवरण / IMEI</th>
+              <th class="py-3.5 px-4">विक्रेता (Seller KYC)</th>
+              <th class="py-3.5 px-4">खरीद मूल्य</th>
+              <th class="py-3.5 px-4">वर्तमान स्थिति</th>
+              <th class="py-3.5 px-4">बिक्री विवरण (यदि बिका)</th>
+              <th class="py-3.5 px-4 text-right">कार्य (Actions)</th>
+            </tr>
+          </thead>
+          <tbody id="inventoryTableBody" class="divide-y divide-slate-100">
+            <!-- Dynamically injected via JavaScript -->
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Empty State -->
+      <div id="emptyState" class="hidden py-16 text-center">
+        <div class="w-16 h-16 mx-auto mb-3 text-slate-300">
+          <i class="fa-solid fa-folder-open text-5xl"></i>
+        </div>
+        <h4 class="text-base font-semibold text-slate-700">कोई रिकॉर्ड नहीं मिला</h4>
+        <p class="text-xs text-slate-400 mt-1 max-w-sm mx-auto">नया सेकंड-हैंड फोन दर्ज करने के लिए ऊपर दिए गए "नई खरीद दर्ज करें" बटन का उपयोग करें।</p>
+      </div>
+    </div>
+  </main>
+
+  <!-- MODAL 1: New Purchase & Seller KYC Entry -->
+  <div id="purchaseModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
+    <div class="bg-white rounded-2xl max-w-3xl w-full max-h-[92vh] flex flex-col shadow-2xl border border-slate-100 overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+      
+      <!-- Modal Header -->
+      <div class="px-5 py-4 bg-slate-900 text-white flex justify-between items-center">
+        <div class="flex items-center space-x-2.5">
+          <div class="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center text-white text-sm">
+            <i class="fa-solid fa-cart-shopping"></i>
+          </div>
+          <div>
+            <h3 class="font-bold text-base leading-tight">नया मोबाइल खरीदें (Seller KYC Entry)</h3>
+            <p class="text-xs text-slate-300">कानूनी सुरक्षा एवं पहचान हेतु विक्रेता का पूरा विवरण भरें</p>
+          </div>
+        </div>
+        <button onclick="closePurchaseModal()" class="text-slate-400 hover:text-white text-lg p-1.5 rounded-lg hover:bg-slate-800 transition">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <!-- Modal Body (Form) -->
+      <form id="purchaseForm" onsubmit="handlePurchaseSubmit(event)" class="p-5 overflow-y-auto space-y-6">
+
+        <!-- Section 1: Device Information -->
+        <div>
+          <div class="flex items-center space-x-2 mb-3 pb-1 border-b border-slate-200">
+            <i class="fa-solid fa-mobile-screen text-blue-600 text-sm"></i>
+            <h4 class="text-xs font-bold uppercase tracking-wider text-slate-700">1. मोबाइल फोन विवरण (Device Details)</h4>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div>
+              <label class="block text-xs font-semibold text-slate-600 mb-1">ब्रांड (Brand) *</label>
+              <input type="text" id="devBrand" required placeholder="उदा. Apple, Samsung, Vivo" class="w-full text-xs sm:text-sm px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:bg-white outline-none">
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-600 mb-1">मॉडल (Model) *</label>
+              <input type="text" id="devModel" required placeholder="उदा. iPhone 13, Note 10" class="w-full text-xs sm:text-sm px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:bg-white outline-none">
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-600 mb-1">रंग / स्टोरेज (Color & RAM/ROM)</label>
+              <input type="text" id="devSpecs" placeholder="उदा. 128GB Blue" class="w-full text-xs sm:text-sm px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:bg-white outline-none">
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-600 mb-1">IMEI 1 (Mandatory) *</label>
+              <input type="text" id="devImei1" required maxlength="16" placeholder="15 अंकों का IMEI 1" class="w-full text-xs sm:text-sm px-3 py-2 font-mono bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:bg-white outline-none">
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-600 mb-1">IMEI 2 (वैकल्पिक)</label>
+              <input type="text" id="devImei2" maxlength="16" placeholder="यदि ड्यूल सिम है" class="w-full text-xs sm:text-sm px-3 py-2 font-mono bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:bg-white outline-none">
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-600 mb-1">खरीदी मूल्य (₹) *</label>
+              <input type="number" id="purchasePrice" min="0" required placeholder="₹ में कीमत" class="w-full text-xs sm:text-sm px-3 py-2 font-semibold text-blue-700 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:bg-white outline-none">
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-600 mb-1">खरीद तारीख (Purchase Date) *</label>
+              <input type="date" id="purchaseDate" required class="w-full text-xs sm:text-sm px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:bg-white outline-none">
+            </div>
+            <div class="sm:col-span-2">
+              <label class="block text-xs font-semibold text-slate-600 mb-1">फोन की स्थिति / कंडीशन रिमार्क्स</label>
+              <input type="text" id="devCondition" placeholder="उदा. स्क्रीन ओरिजिनल, माइनर स्क्रैच, बॉक्स और बिल मौजूद" class="w-full text-xs sm:text-sm px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:bg-white outline-none">
+            </div>
+          </div>
+        </div>
+
+        <!-- Section 2: Seller KYC Information -->
+        <div>
+          <div class="flex items-center space-x-2 mb-3 pb-1 border-b border-slate-200">
+            <i class="fa-solid fa-id-card text-emerald-600 text-sm"></i>
+            <h4 class="text-xs font-bold uppercase tracking-wider text-slate-700">2. विक्रेता केवाईसी विवरण (Seller KYC Details)</h4>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div>
+              <label class="block text-xs font-semibold text-slate-600 mb-1">विक्रेता का पूरा नाम *</label>
+              <input type="text" id="sellerName" required placeholder="ग्राहक का नाम" class="w-full text-xs sm:text-sm px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:bg-white outline-none">
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-600 mb-1">मोबाइल नंबर *</label>
+              <input type="tel" id="sellerPhone" required maxlength="10" placeholder="10 अंकों का फोन नंबर" class="w-full text-xs sm:text-sm px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:bg-white outline-none">
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-600 mb-1">आधार कार्ड नंबर *</label>
+              <input type="text" id="sellerAadhaar" required maxlength="14" placeholder="1234 5678 9012" oninput="formatAadhaar(this)" class="w-full text-xs sm:text-sm px-3 py-2 font-mono bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:bg-white outline-none">
+            </div>
+            <div class="sm:col-span-3">
+              <label class="block text-xs font-semibold text-slate-600 mb-1">स्थायी पता (Full Address with City/Pincode) *</label>
+              <textarea id="sellerAddress" rows="2" required placeholder="मकान नं., गली/मोहल्ला, शहर, पिनकोड" class="w-full text-xs sm:text-sm px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:bg-white outline-none"></textarea>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section 3: Photo & Document Proof -->
+        <div>
+          <div class="flex items-center space-x-2 mb-3 pb-1 border-b border-slate-200">
+            <i class="fa-solid fa-camera text-indigo-600 text-sm"></i>
+            <h4 class="text-xs font-bold uppercase tracking-wider text-slate-700">3. फोटो व पहचान पत्र (Customer Photo & ID Upload)</h4>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <!-- Customer Photo Upload -->
+            <div class="p-3 bg-slate-50 border border-dashed border-slate-300 rounded-xl flex items-center gap-3">
+              <div id="photoPreviewBox" class="w-16 h-16 rounded-lg bg-slate-200 border border-slate-300 flex items-center justify-center overflow-hidden shrink-0">
+                <i class="fa-solid fa-user text-slate-400 text-xl" id="photoPlaceholderIcon"></i>
+                <img id="photoPreviewImg" class="w-full h-full object-cover hidden" alt="Customer Preview">
+              </div>
+              <div class="flex-1">
+                <label class="block text-xs font-semibold text-slate-700 mb-1">ग्राहक की लाइव फोटो</label>
+                <input type="file" id="customerPhotoInput" accept="image/*" onchange="previewFile(this, 'photoPreviewImg', 'photoPlaceholderIcon')" class="text-xs text-slate-500 file:mr-2 file:py-1 file:px-2.5 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer">
+              </div>
+            </div>
+
+            <!-- Aadhaar / ID Card Upload -->
+            <div class="p-3 bg-slate-50 border border-dashed border-slate-300 rounded-xl flex items-center gap-3">
+              <div id="idPreviewBox" class="w-16 h-16 rounded-lg bg-slate-200 border border-slate-300 flex items-center justify-center overflow-hidden shrink-0">
+                <i class="fa-solid fa-address-card text-slate-400 text-xl" id="idPlaceholderIcon"></i>
+                <img id="idPreviewImg" class="w-full h-full object-cover hidden" alt="ID Document Preview">
+              </div>
+              <div class="flex-1">
+                <label class="block text-xs font-semibold text-slate-700 mb-1">आधार कार्ड फोटो</label>
+                <input type="file" id="customerIdInput" accept="image/*" onchange="previewFile(this, 'idPreviewImg', 'idPlaceholderIcon')" class="text-xs text-slate-500 file:mr-2 file:py-1 file:px-2.5 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section 4: Legal Undertaking Checkbox -->
+        <div class="p-3 bg-amber-50/70 border border-amber-200/80 rounded-xl flex items-start gap-2.5">
+          <input type="checkbox" id="sellerDeclaration" required class="mt-1 h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded cursor-pointer">
+          <label for="sellerDeclaration" class="text-xs text-amber-900 leading-relaxed cursor-pointer">
+            <strong>वैधानिक घोषणा (Legal Undertaking):</strong> मैं प्रमाणित करता हूँ कि यह मोबाइल हैंडसेट पूर्णतः मेरा अपना है, चोरी या किसी भी गैरकानूनी गतिविधि से संबंधित नहीं है। भविष्य में इस फोन संबंधी किसी भी पुलिस जांच या विवाद की पूर्ण जिम्मेदारी मेरी होगी।
+          </label>
+        </div>
+
+        <!-- Submit Button -->
+        <div class="flex justify-end gap-2 pt-2 border-t border-slate-100">
+          <button type="button" onclick="closePurchaseModal()" class="px-4 py-2 text-xs sm:text-sm font-medium text-slate-600 hover:bg-slate-100 rounded-lg transition">रद्द करें</button>
+          <button type="submit" class="px-5 py-2 text-xs sm:text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 active:scale-95 rounded-lg shadow-md shadow-blue-600/30 transition flex items-center gap-2">
+            <i class="fa-solid fa-check"></i>
+            <span>रजिस्टर में सुरक्षित करें</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL 2: Mark As Sold Modal -->
+  <div id="soldModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
+    <div class="bg-white rounded-2xl max-w-lg w-full max-h-[92vh] flex flex-col shadow-2xl border border-slate-100 overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+      
+      <div class="px-5 py-4 bg-emerald-700 text-white flex justify-between items-center">
+        <div class="flex items-center space-x-2.5">
+          <div class="w-8 h-8 rounded-lg bg-emerald-800 flex items-center justify-center text-white text-sm">
+            <i class="fa-solid fa-bag-shopping"></i>
+          </div>
+          <div>
+            <h3 class="font-bold text-base leading-tight">बिक्री विवरण दर्ज करें (Mark As Sold)</h3>
+            <p class="text-xs text-emerald-100">खरीदार ग्राहक की जानकारी एवं बिलिंग</p>
+          </div>
+        </div>
+        <button onclick="closeSoldModal()" class="text-emerald-200 hover:text-white text-lg p-1.5 rounded-lg hover:bg-emerald-800 transition">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <form id="soldForm" onsubmit="handleSoldSubmit(event)" class="p-5 space-y-4 overflow-y-auto">
+        <input type="hidden" id="soldRecordId">
+
+        <!-- Phone Snapshot Card -->
+        <div class="p-3 bg-slate-50 border border-slate-200 rounded-xl text-xs space-y-1">
+          <div class="flex justify-between font-bold text-slate-800 text-sm">
+            <span id="soldModalPhoneName">Apple iPhone 12</span>
+            <span class="text-blue-600" id="soldModalBuyPrice">खरीद: ₹18,000</span>
+          </div>
+          <p class="text-slate-500 font-mono text-[11px]" id="soldModalImei">IMEI: 864201938210391</p>
+        </div>
+
+        <div class="space-y-3">
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">खरीदार का नाम (Buyer Name) *</label>
+            <input type="text" id="buyerName" required placeholder="ग्राहक का नाम" class="w-full text-xs sm:text-sm px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:bg-white outline-none">
+          </div>
+
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="block text-xs font-semibold text-slate-600 mb-1">मोबाइल नंबर *</label>
+              <input type="tel" id="buyerPhone" required maxlength="10" placeholder="10 अंक" class="w-full text-xs sm:text-sm px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:bg-white outline-none">
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-600 mb-1">पहचान पत्र (Aadhaar/ID) *</label>
+              <input type="text" id="buyerIdProof" required placeholder="आधार / DL नं." class="w-full text-xs sm:text-sm px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:bg-white outline-none">
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">खरीदार का पता (Buyer Address) *</label>
+            <textarea id="buyerAddress" rows="2" required placeholder="पूरा पता व शहर" class="w-full text-xs sm:text-sm px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:bg-white outline-none"></textarea>
+          </div>
+
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="block text-xs font-semibold text-slate-600 mb-1">बिक्री मूल्य (Selling Price ₹) *</label>
+              <input type="number" id="salePrice" min="0" required placeholder="₹ बिक्री राशि" oninput="calculateModalProfit()" class="w-full text-xs sm:text-sm px-3 py-2 font-semibold text-emerald-700 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:bg-white outline-none">
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-600 mb-1">बिक्री दिनांक *</label>
+              <input type="date" id="saleDate" required class="w-full text-xs sm:text-sm px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:bg-white outline-none">
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="block text-xs font-semibold text-slate-600 mb-1">भुगतान का माध्यम (Payment Mode)</label>
+              <select id="paymentMode" class="w-full text-xs sm:text-sm px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:bg-white outline-none">
+                <option value="UPI / Online">Google Pay / PhonePe / UPI</option>
+                <option value="नकद (Cash)">नकद (Cash)</option>
+                <option value="बैंक ट्रांसफर / NEFT">बैंक ट्रांसफर / IMPS</option>
+                <option value="कार्ड (Debit/Credit)">डेबिट / क्रेडिट कार्ड</option>
+              </select>
+            </div>
+            <div class="flex flex-col justify-end">
+              <div class="p-2 bg-emerald-50 border border-emerald-200 rounded-lg text-xs">
+                <span class="text-slate-500 block">अनुमानित मुनाफा:</span>
+                <span id="calculatedProfitBadge" class="font-bold text-emerald-700 text-sm">₹0</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex justify-end gap-2 pt-3 border-t border-slate-100">
+          <button type="button" onclick="closeSoldModal()" class="px-4 py-2 text-xs sm:text-sm font-medium text-slate-600 hover:bg-slate-100 rounded-lg transition">रद्द करें</button>
+          <button type="submit" class="px-5 py-2 text-xs sm:text-sm font-semibold text-white bg-emerald-600 hover:bg-emerald-700 active:scale-95 rounded-lg shadow-md shadow-emerald-600/30 transition flex items-center gap-2">
+            <i class="fa-solid fa-check"></i>
+            <span>बिक्री पक्की करें</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL 3: Detailed Record View & KYC Verification Details -->
+  <div id="detailsModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
+    <div class="bg-white rounded-2xl max-w-2xl w-full max-h-[92vh] flex flex-col shadow-2xl border border-slate-100 overflow-hidden">
+      <div class="px-5 py-4 bg-slate-800 text-white flex justify-between items-center">
+        <h3 class="font-bold text-base flex items-center gap-2">
+          <i class="fa-solid fa-file-shield text-blue-400"></i>
+          <span>फोन व केवाईसी संपूर्ण विवरण</span>
+        </h3>
+        <button onclick="closeDetailsModal()" class="text-slate-400 hover:text-white text-lg p-1 rounded-lg hover:bg-slate-700 transition">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <div class="p-5 overflow-y-auto space-y-5" id="detailsModalContent">
+        <!-- Injected via JavaScript -->
+      </div>
+
+      <div class="px-5 py-3.5 bg-slate-50 border-t border-slate-200 flex justify-between items-center">
+        <button type="button" onclick="printSingleRecordFromModal()" class="px-4 py-2 text-xs sm:text-sm font-medium text-slate-700 bg-white hover:bg-slate-100 border border-slate-300 rounded-lg shadow-sm flex items-center gap-2">
+          <i class="fa-solid fa-print text-blue-600"></i>
+          <span>केवाईसी रसीद प्रिंट करें</span>
+        </button>
+        <button type="button" onclick="closeDetailsModal()" class="px-4 py-2 text-xs sm:text-sm font-semibold text-white bg-slate-800 hover:bg-slate-900 rounded-lg transition">बंद करें</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- HIDDEN PRINT TEMPLATE FOR KYC / POLICE REGISTER RECEIPT -->
+  <div id="printArea" class="hidden">
+    <!-- Populated dynamically when print is clicked -->
+  </div>
+
+  <!-- Toast Notification Message Box -->
+  <div id="toast" class="fixed bottom-5 right-5 z-50 transform translate-y-20 opacity-0 transition-all duration-300 bg-slate-900 text-white px-4 py-3 rounded-xl shadow-xl flex items-center space-x-3 text-sm pointer-events-none">
+    <i id="toastIcon" class="fa-solid fa-circle-check text-emerald-400 text-lg"></i>
+    <span id="toastMsg">ऑपरेशन सफल रहा!</span>
+  </div>
+
+  <!-- Application Logic -->
+  <script>
+    // Storage Key
+    const STORAGE_KEY = 'SECOND_HAND_MOBILE_REGISTER_DATA_V1';
+
+    // State Variables
+    let records = [];
+    let activeFilter = 'all'; // 'all', 'stock', 'sold'
+    let currentDetailRecord = null;
+
+    // Default Seed Data (realistic for Indian Mobile Retailers)
+    const initialSeedData = [
+      {
+        id: 'rec_101',
+        brand: 'OnePlus',
+        model: 'Nord CE 2 5G',
+        specs: '128GB Gray / 8GB RAM',
+        imei1: '864920048192019',
+        imei2: '864920048192027',
+        condition: 'बिल्कुल फ्रेश कंडीशन, कोई डेंट नहीं, मूल चार्जर सहित',
+        purchasePrice: 11000,
+        purchaseDate: '2026-10-15',
+        sellerName: 'राहुल शर्मा',
+        sellerPhone: '9829012345',
+        sellerAadhaar: '9876 5432 1098',
+        sellerAddress: 'मकान नं 42, मालवीय नगर, जयपुर, राजस्थान',
+        sellerPhoto: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=200&q=80',
+        sellerIdDoc: 'https://images.unsplash.com/photo-1589829545856-d10d557cf95f?auto=format&fit=crop&w=300&q=80',
+        status: 'SOLD',
+        buyerName: 'सुरेश कुमार प्रजापत',
+        buyerPhone: '9414098765',
+        buyerIdProof: 'Aadhaar 4321 8765 2109',
+        buyerAddress: 'प्लॉट नं 18, वैशाली नगर, जयपुर',
+        salePrice: 13500,
+        saleDate: '2026-10-22',
+        paymentMode: 'UPI / Online'
+      },
+      {
+        id: 'rec_102',
+        brand: 'Apple',
+        model: 'iPhone 13',
+        specs: '128GB Midnight Black',
+        imei1: '354890118372645',
+        imei2: '',
+        condition: 'बैटरी हेल्थ 88%, ओरिजिनल डिस्प्ले, कोई डैमेज नहीं',
+        purchasePrice: 28000,
+        purchaseDate: '2026-10-25',
+        sellerName: 'अमित वर्मा',
+        sellerPhone: '8875012345',
+        sellerAadhaar: '6543 2198 7654',
+        sellerAddress: 'फ्लैट 302, श्याम नगर, जयपुर, राजस्थान',
+        sellerPhoto: 'https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?auto=format&fit=crop&w=200&q=80',
+        sellerIdDoc: 'https://images.unsplash.com/photo-1589829545856-d10d557cf95f?auto=format&fit=crop&w=300&q=80',
+        status: 'IN_STOCK',
+        buyerName: '',
+        buyerPhone: '',
+        buyerIdProof: '',
+        buyerAddress: '',
+        salePrice: 0,
+        saleDate: '',
+        paymentMode: ''
+      },
+      {
+        id: 'rec_103',
+        brand: 'Samsung',
+        model: 'Galaxy A53 5G',
+        specs: '128GB Awesome Blue',
+        imei1: '359871109483721',
+        imei2: '359871109483729',
+        condition: 'हल्के बैक स्क्रैच, कैमरा व फिंगरप्रिंट परफेक्ट काम कर रहा है',
+        purchasePrice: 12500,
+        purchaseDate: '2026-10-27',
+        sellerName: 'दिलीप सिंह',
+        sellerPhone: '7737088990',
+        sellerAadhaar: '3210 9876 5432',
+        sellerAddress: 'ग्राम - कानोता, बस्सी रोड, जयपुर',
+        sellerPhoto: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=80',
+        sellerIdDoc: 'https://images.unsplash.com/photo-1589829545856-d10d557cf95f?auto=format&fit=crop&w=300&q=80',
+        status: 'IN_STOCK',
+        buyerName: '',
+        buyerPhone: '',
+        buyerIdProof: '',
+        buyerAddress: '',
+        salePrice: 0,
+        saleDate: '',
+        paymentMode: ''
+      }
+    ];
+
+    // Initialize App on Window Load
+    window.onload = function() {
+      // Set default purchase & sale dates to today
+      const today = new Date().toISOString().split('T')[0];
+      document.getElementById('purchaseDate').value = today;
+      document.getElementById('saleDate').value = today;
+
+      // Load records from LocalStorage or seed
+      const savedData = localStorage.getItem(STORAGE_KEY);
+      if (savedData) {
+        try {
+          records = JSON.parse(savedData);
+        } catch (e) {
+          records = initialSeedData;
+        }
+      } else {
+        records = initialSeedData;
+        saveToLocalStorage();
+      }
+
+      updateKPIs();
+      renderInventoryTable();
+    };
+
+    function saveToLocalStorage() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(records));
+    }
+
+    // Auto-Format Aadhaar Card input as XXXX XXXX XXXX
+    function formatAadhaar(input) {
+      let val = input.value.replace(/\D/g, '');
+      if (val.length > 12) val = val.substring(0, 12);
+      let formatted = '';
+      for (let i = 0; i < val.length; i++) {
+        if (i > 0 && i % 4 === 0) formatted += ' ';
+        formatted += val[i];
+      }
+      input.value = formatted;
+    }
+
+    // Handle File Base64 previews for offline/local storage
+    let tempCustomerPhotoData = '';
+    let tempCustomerIdDocData = '';
+
+    function previewFile(input, imgElementId, iconElementId) {
+      const file = input.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          const result = e.target.result;
+          const img = document.getElementById(imgElementId);
+          const icon = document.getElementById(iconElementId);
+          img.src = result;
+          img.classList.remove('hidden');
+          if (icon) icon.classList.add('hidden');
+
+          if (imgElementId === 'photoPreviewImg') {
+            tempCustomerPhotoData = result;
+          } else {
+            tempCustomerIdDocData = result;
+          }
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+
+    // Update Dashboard Metrics / KPIs
+    function updateKPIs() {
+      const totalPhones = records.length;
+      const inStock = records.filter(r => r.status === 'IN_STOCK').length;
+      const sold = records.filter(r => r.status === 'SOLD').length;
+
+      const totalInvestment = records.reduce((sum, r) => sum + Number(r.purchasePrice || 0), 0);
+      const totalSales = records.filter(r => r.status === 'SOLD').reduce((sum, r) => sum + Number(r.salePrice || 0), 0);
+      
+      const soldPhonesInvestment = records.filter(r => r.status === 'SOLD').reduce((sum, r) => sum + Number(r.purchasePrice || 0), 0);
+      const totalProfit = totalSales - soldPhonesInvestment;
+
+      document.getElementById('statTotalPhones').innerText = totalPhones;
+      document.getElementById('statInStock').innerText = inStock;
+      document.getElementById('statSold').innerText = sold;
+      document.getElementById('statTotalInvestment').innerText = '₹' + totalInvestment.toLocaleString('en-IN');
+      document.getElementById('statTotalSales').innerText = '₹' + totalSales.toLocaleString('en-IN');
+      document.getElementById('statTotalProfit').innerText = '₹' + totalProfit.toLocaleString('en-IN');
+    }
+
+    // Filter Navigation Handler
+    function setFilter(filterType) {
+      activeFilter = filterType;
+      
+      const tabAll = document.getElementById('tabAll');
+      const tabStock = document.getElementById('tabStock');
+      const tabSold = document.getElementById('tabSold');
+
+      const activeClass = "bg-white text-slate-900 shadow-sm font-semibold";
+      const inactiveClass = "text-slate-600 hover:text-slate-900 font-medium";
+
+      tabAll.className = `flex-1 sm:flex-none px-4 py-1.5 rounded-md transition ${filterType === 'all' ? activeClass : inactiveClass}`;
+      tabStock.className = `flex-1 sm:flex-none px-4 py-1.5 rounded-md transition ${filterType === 'stock' ? activeClass : inactiveClass}`;
+      tabSold.className = `flex-1 sm:flex-none px-4 py-1.5 rounded-md transition ${filterType === 'sold' ? activeClass : inactiveClass}`;
+
+      renderInventoryTable();
+    }
+
+    // Render Table Content
+    function renderInventoryTable() {
+      const tbody = document.getElementById('inventoryTableBody');
+      const emptyState = document.getElementById('emptyState');
+      const searchVal = (document.getElementById('searchInput').value || '').toLowerCase().trim();
+
+      tbody.innerHTML = '';
+
+      let filtered = records.filter(item => {
+        if (activeFilter === 'stock' && item.status !== 'IN_STOCK') return false;
+        if (activeFilter === 'sold' && item.status !== 'SOLD') return false;
+
+        if (searchVal) {
+          const matchBrand = (item.brand || '').toLowerCase().includes(searchVal);
+          const matchModel = (item.model || '').toLowerCase().includes(searchVal);
+          const matchImei1 = (item.imei1 || '').toLowerCase().includes(searchVal);
+          const matchImei2 = (item.imei2 || '').toLowerCase().includes(searchVal);
+          const matchSeller = (item.sellerName || '').toLowerCase().includes(searchVal);
+          const matchBuyer = (item.buyerName || '').toLowerCase().includes(searchVal);
+          return matchBrand || matchModel || matchImei1 || matchImei2 || matchSeller || matchBuyer;
+        }
+        return true;
+      });
+
+      if (filtered.length === 0) {
+        emptyState.classList.remove('hidden');
+        return;
+      } else {
+        emptyState.classList.add('hidden');
+      }
+
+      filtered.forEach(item => {
+        const isSold = item.status === 'SOLD';
+        const tr = document.createElement('tr');
+        tr.className = "hover:bg-slate-50/80 transition-colors";
+
+        const photoUrl = item.sellerPhoto || 'https://placehold.co/100x100/e2e8f0/64748b?text=No+Photo';
+
+        tr.innerHTML = `
+          <td class="py-3 px-4">
+            <div class="flex items-center space-x-3">
+              <img src="${photoUrl}" alt="Customer" class="w-10 h-10 rounded-full object-cover border border-slate-200 shrink-0" onerror="this.src='https://placehold.co/100x100/e2e8f0/64748b?text=KYC'">
+              <div>
+                <span class="block text-xs font-semibold text-slate-800">${formatDate(item.purchaseDate)}</span>
+                <span class="text-[11px] text-slate-400">ID: #${item.id.slice(-4)}</span>
+              </div>
+            </div>
+          </td>
+
+          <td class="py-3 px-4">
+            <div class="font-semibold text-slate-900">${escapeHtml(item.brand)} ${escapeHtml(item.model)}</div>
+            <div class="text-xs text-slate-500 font-mono tracking-wide">IMEI: ${escapeHtml(item.imei1)}</div>
+            ${item.specs ? `<span class="inline-block text-[10px] bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded mt-0.5">${escapeHtml(item.specs)}</span>` : ''}
+          </td>
+
+          <td class="py-3 px-4">
+            <div class="font-medium text-slate-900 flex items-center gap-1.5">
+              <span>${escapeHtml(item.sellerName)}</span>
+              <span class="text-[10px] text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200">KYC Verified</span>
+            </div>
+            <div class="text-xs text-slate-500"><i class="fa-solid fa-phone text-[10px] mr-1 text-slate-400"></i>${escapeHtml(item.sellerPhone)}</div>
+            <div class="text-[11px] text-slate-400 font-mono">आधार: ${escapeHtml(maskAadhaar(item.sellerAadhaar))}</div>
+          </td>
+
+          <td class="py-3 px-4 font-semibold text-slate-800">
+            ₹${Number(item.purchasePrice).toLocaleString('en-IN')}
+          </td>
+
+          <td class="py-3 px-4">
+            ${isSold ? `
+              <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800">
+                <span class="w-1.5 h-1.5 mr-1.5 rounded-full bg-emerald-600"></span>बिक चुका (Sold)
+              </span>
+            ` : `
+              <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold bg-amber-100 text-amber-800">
+                <span class="w-1.5 h-1.5 mr-1.5 rounded-full bg-amber-600"></span>स्टॉक में (In Stock)
+              </span>
+            `}
+          </td>
+
+          <td class="py-3 px-4">
+            ${isSold ? `
+              <div class="text-xs">
+                <span class="font-semibold text-slate-800 block">${escapeHtml(item.buyerName)}</span>
+                <span class="text-emerald-700 font-bold">₹${Number(item.salePrice).toLocaleString('en-IN')}</span>
+                <span class="text-[11px] text-teal-600 block">(मुनाफा: ₹${(Number(item.salePrice) - Number(item.purchasePrice)).toLocaleString('en-IN')})</span>
+              </div>
+            ` : `
+              <span class="text-xs text-slate-400 italic">अभी नहीं बिका</span>
+            `}
+          </td>
+
+          <td class="py-3 px-4 text-right">
+            <div class="flex items-center justify-end space-x-1.5">
+              ${!isSold ? `
+                <button onclick="openSoldModal('${item.id}')" title="बिक्री दर्ज करें" class="px-2.5 py-1 text-xs font-semibold bg-emerald-600 hover:bg-emerald-700 text-white rounded-md shadow-sm transition">
+                  <i class="fa-solid fa-cart-arrow-down mr-1"></i>बेचें
+                </button>
+              ` : ''}
+
+              <button onclick="viewDetails('${item.id}')" title="केवाईसी और रसीद देखें" class="p-1.5 text-slate-600 hover:text-blue-600 hover:bg-blue-50 rounded-md transition border border-slate-200">
+                <i class="fa-solid fa-eye text-xs"></i>
+              </button>
+
+              <button onclick="printRecordById('${item.id}')" title="प्रिंट रसीद" class="p-1.5 text-slate-600 hover:text-emerald-600 hover:bg-emerald-50 rounded-md transition border border-slate-200">
+                <i class="fa-solid fa-print text-xs"></i>
+              </button>
+
+              <button onclick="deleteRecord('${item.id}')" title="हटाएं" class="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-md transition">
+                <i class="fa-solid fa-trash text-xs"></i>
+              </button>
+            </div>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    // Helper: Mask Aadhaar for UI Security (e.g. XXXX-XXXX-1234)
+    function maskAadhaar(aadhaarStr) {
+      if (!aadhaarStr) return 'N/A';
+      const clean = aadhaarStr.replace(/\s+/g, '');
+      if (clean.length === 12) {
+        return `XXXX-XXXX-${clean.slice(-4)}`;
+      }
+      return aadhaarStr;
+    }
+
+    function formatDate(dateStr) {
+      if (!dateStr) return '';
+      const parts = dateStr.split('-');
+      if (parts.length === 3) {
+        return `${parts[2]}/${parts[1]}/${parts[0]}`;
+      }
+      return dateStr;
+    }
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    // Modal Control: Purchase
+    function openPurchaseModal() {
+      document.getElementById('purchaseForm').reset();
+      tempCustomerPhotoData = '';
+      tempCustomerIdDocData = '';
+      document.getElementById('photoPreviewImg').classList.add('hidden');
+      document.getElementById('photoPlaceholderIcon').classList.remove('hidden');
+      document.getElementById('idPreviewImg').classList.add('hidden');
+      document.getElementById('idPlaceholderIcon').classList.remove('hidden');
+
+      const today = new Date().toISOString().split('T')[0];
+      document.getElementById('purchaseDate').value = today;
+
+      document.getElementById('purchaseModal').classList.remove('hidden');
+    }
+
+    function closePurchaseModal() {
+      document.getElementById('purchaseModal').classList.add('hidden');
+    }
+
+    // Handle Purchase Submission
+    function handlePurchaseSubmit(e) {
+      e.preventDefault();
+
+      const newRecord = {
+        id: 'rec_' + Date.now(),
+        brand: document.getElementById('devBrand').value.trim(),
+        model: document.getElementById('devModel').value.trim(),
+        specs: document.getElementById('devSpecs').value.trim(),
+        imei1: document.getElementById('devImei1').value.trim(),
+        imei2: document.getElementById('devImei2').value.trim(),
+        condition: document.getElementById('devCondition').value.trim(),
+        purchasePrice: parseFloat(document.getElementById('purchasePrice').value) || 0,
+        purchaseDate: document.getElementById('purchaseDate').value,
+        sellerName: document.getElementById('sellerName').value.trim(),
+        sellerPhone: document.getElementById('sellerPhone').value.trim(),
+        sellerAadhaar: document.getElementById('sellerAadhaar').value.trim(),
+        sellerAddress: document.getElementById('sellerAddress').value.trim(),
+        sellerPhoto: tempCustomerPhotoData || 'https://placehold.co/200x200/e2e8f0/475569?text=Photo',
+        sellerIdDoc: tempCustomerIdDocData || 'https://placehold.co/300x200/e2e8f0/475569?text=Aadhaar+ID',
+        status: 'IN_STOCK',
+        buyerName: '',
+        buyerPhone: '',
+        buyerIdProof: '',
+        buyerAddress: '',
+        salePrice: 0,
+        saleDate: '',
+        paymentMode: ''
+      };
+
+      records.unshift(newRecord);
+      saveToLocalStorage();
+      updateKPIs();
+      renderInventoryTable();
+      closePurchaseModal();
+      showToast('नया फोन व विक्रेता केवाईसी सफलता से रजिस्टर में दर्ज हुआ!');
+    }
+
+    // Modal Control: Sold Modal
+    function openSoldModal(id) {
+      const rec = records.find(r => r.id === id);
+      if (!rec) return;
+
+      document.getElementById('soldRecordId').value = rec.id;
+      document.getElementById('soldModalPhoneName').innerText = `${rec.brand} ${rec.model} (${rec.specs || ''})`;
+      document.getElementById('soldModalBuyPrice').innerText = `खरीद मूल्य: ₹${Number(rec.purchasePrice).toLocaleString('en-IN')}`;
+      document.getElementById('soldModalImei').innerText = `IMEI 1: ${rec.imei1}`;
+
+      // Reset form fields
+      document.getElementById('buyerName').value = '';
+      document.getElementById('buyerPhone').value = '';
+      document.getElementById('buyerIdProof').value = '';
+      document.getElementById('buyerAddress').value = '';
+      document.getElementById('salePrice').value = '';
+      document.getElementById('saleDate').value = new Date().toISOString().split('T')[0];
+      document.getElementById('calculatedProfitBadge').innerText = '₹0';
+
+      document.getElementById('soldModal').classList.remove('hidden');
+    }
+
+    function closeSoldModal() {
+      document.getElementById('soldModal').classList.add('hidden');
+    }
+
+    function calculateModalProfit() {
+      const recId = document.getElementById('soldRecordId').value;
+      const rec = records.find(r => r.id === recId);
+      if (!rec) return;
+
+      const saleVal = parseFloat(document.getElementById('salePrice').value) || 0;
+      const profit = saleVal - Number(rec.purchasePrice);
+      const badge = document.getElementById('calculatedProfitBadge');
+
+      if (profit >= 0) {
+        badge.className = "font-bold text-emerald-700 text-sm";
+        badge.innerText = `+ ₹${profit.toLocaleString('en-IN')} (मुनाफा)`;
+      } else {
+        badge.className = "font-bold text-rose-600 text-sm";
+        badge.innerText = `- ₹${Math.abs(profit).toLocaleString('en-IN')} (घाटा)`;
+      }
+    }
+
+    // Handle Sold Submit
+    function handleSoldSubmit(e) {
+      e.preventDefault();
+      const recId = document.getElementById('soldRecordId').value;
+      const index = records.findIndex(r => r.id === recId);
+      if (index === -1) return;
+
+      records[index].status = 'SOLD';
+      records[index].buyerName = document.getElementById('buyerName').value.trim();
+      records[index].buyerPhone = document.getElementById('buyerPhone').value.trim();
+      records[index].buyerIdProof = document.getElementById('buyerIdProof').value.trim();
+      records[index].buyerAddress = document.getElementById('buyerAddress').value.trim();
+      records[index].salePrice = parseFloat(document.getElementById('salePrice').value) || 0;
+      records[index].saleDate = document.getElementById('saleDate').value;
+      records[index].paymentMode = document.getElementById('paymentMode').value;
+
+      saveToLocalStorage();
+      updateKPIs();
+      renderInventoryTable();
+      closeSoldModal();
+      showToast('बिक्री विवरण सफलतापूर्वक अपडेट किया गया!');
+    }
+
+    // View Complete Detailed Record
+    function viewDetails(id) {
+      const rec = records.find(r => r.id === id);
+      if (!rec) return;
+
+      currentDetailRecord = rec;
+      const isSold = rec.status === 'SOLD';
+      const profit = isSold ? (Number(rec.salePrice) - Number(rec.purchasePrice)) : 0;
+
+      const content = `
+        <!-- Device Info Card -->
+        <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+          <div class="flex justify-between items-start mb-2">
+            <div>
+              <span class="text-xs font-bold text-blue-600 uppercase tracking-wider">डिवाइस विवरण</span>
+              <h4 class="text-lg font-bold text-slate-800">${escapeHtml(rec.brand)} ${escapeHtml(rec.model)}</h4>
+            </div>
+            <span class="px-2.5 py-1 text-xs font-bold rounded-full ${isSold ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'}">
+              ${isSold ? 'बिक चुका (SOLD)' : 'स्टॉक में (IN STOCK)'}
+            </span>
+          </div>
+
+          <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 text-xs mt-3">
+            <div><strong class="text-slate-500 block">कलर/स्टोरेज:</strong> ${escapeHtml(rec.specs || 'N/A')}</div>
+            <div><strong class="text-slate-500 block">IMEI 1:</strong> <span class="font-mono text-slate-800 font-semibold">${escapeHtml(rec.imei1)}</span></div>
+            <div><strong class="text-slate-500 block">IMEI 2:</strong> <span class="font-mono text-slate-800">${escapeHtml(rec.imei2 || 'उपलब्ध नहीं')}</span></div>
+            <div><strong class="text-slate-500 block">खरीद मूल्य:</strong> <span class="font-bold text-slate-800">₹${Number(rec.purchasePrice).toLocaleString('en-IN')}</span></div>
+            <div><strong class="text-slate-500 block">खरीद दिनांक:</strong> ${formatDate(rec.purchaseDate)}</div>
+            <div><strong class="text-slate-500 block">स्थिति / कंडीशन:</strong> ${escapeHtml(rec.condition || 'सामान्य')}</div>
+          </div>
+        </div>
+
+        <!-- Seller KYC Card -->
+        <div class="border border-slate-200 rounded-xl p-4">
+          <div class="flex items-center space-x-2 mb-3">
+            <i class="fa-solid fa-user-shield text-emerald-600"></i>
+            <h5 class="text-sm font-bold text-slate-800 uppercase tracking-wide">विक्रेता केवाईसी विवरण (Seller Verification)</h5>
+          </div>
+
+          <div class="flex flex-col sm:flex-row gap-4">
+            <div class="flex gap-2">
+              <div class="text-center">
+                <img src="${rec.sellerPhoto || 'https://placehold.co/120x120?text=Photo'}" alt="Customer Photo" class="w-24 h-24 rounded-lg object-cover border border-slate-300 shadow-sm" onerror="this.src='https://placehold.co/120x120?text=KYC'">
+                <span class="text-[10px] text-slate-500 block mt-1">ग्राहक फोटो</span>
+              </div>
+              <div class="text-center">
+                <img src="${rec.sellerIdDoc || 'https://placehold.co/120x120?text=ID+Doc'}" alt="Customer ID" class="w-24 h-24 rounded-lg object-cover border border-slate-300 shadow-sm" onerror="this.src='https://placehold.co/120x120?text=Aadhaar'">
+                <span class="text-[10px] text-slate-500 block mt-1">आईडी प्रूफ</span>
+              </div>
+            </div>
+
+            <div class="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+              <div><strong class="text-slate-500 block">विक्रेता का नाम:</strong> <span class="font-semibold text-slate-900">${escapeHtml(rec.sellerName)}</span></div>
+              <div><strong class="text-slate-500 block">मोबाइल नंबर:</strong> <a href="tel:${escapeHtml(rec.sellerPhone)}" class="text-blue-600 font-medium">${escapeHtml(rec.sellerPhone)}</a></div>
+              <div><strong class="text-slate-500 block">आधार कार्ड संख्या:</strong> <span class="font-mono text-slate-800 font-semibold">${escapeHtml(rec.sellerAadhaar)}</span></div>
+              <div class="sm:col-span-2"><strong class="text-slate-500 block">स्थायी घर का पता:</strong> ${escapeHtml(rec.sellerAddress)}</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Buyer Info (if Sold) -->
+        ${isSold ? `
+          <div class="border border-emerald-200 bg-emerald-50/40 rounded-xl p-4">
+            <div class="flex items-center space-x-2 mb-3">
+              <i class="fa-solid fa-receipt text-emerald-600"></i>
+              <h5 class="text-sm font-bold text-emerald-900 uppercase tracking-wide">बिक्री एवं खरीदार विवरण (Buyer Details)</h5>
+            </div>
+
+            <div class="grid grid-cols-2 sm:grid-cols-3 gap-2.5 text-xs">
+              <div><strong class="text-slate-500 block">खरीदार का नाम:</strong> <span class="font-semibold text-slate-900">${escapeHtml(rec.buyerName)}</span></div>
+              <div><strong class="text-slate-500 block">मोबाइल नंबर:</strong> ${escapeHtml(rec.buyerPhone)}</div>
+              <div><strong class="text-slate-500 block">पहचान पत्र संख्या:</strong> ${escapeHtml(rec.buyerIdProof)}</div>
+              <div><strong class="text-slate-500 block">बिक्री मूल्य:</strong> <span class="font-bold text-emerald-700 text-sm">₹${Number(rec.salePrice).toLocaleString('en-IN')}</span></div>
+              <div><strong class="text-slate-500 block">बिक्री दिनांक:</strong> ${formatDate(rec.saleDate)}</div>
+              <div><strong class="text-slate-500 block">भुगतान प्रकार:</strong> ${escapeHtml(rec.paymentMode)}</div>
+              <div class="sm:col-span-3"><strong class="text-slate-500 block">खरीदार का पता:</strong> ${escapeHtml(rec.buyerAddress)}</div>
+              <div class="sm:col-span-3 pt-2 border-t border-emerald-100 flex justify-between items-center">
+                <span class="font-semibold text-slate-700">इस बिक्री पर मुनाफा (Gross Profit):</span>
+                <span class="font-bold text-sm ${profit >= 0 ? 'text-emerald-700' : 'text-rose-600'}">
+                  ₹${profit.toLocaleString('en-IN')}
+                </span>
+              </div>
+            </div>
+          </div>
+        ` : ''}
+      `;
+
+      document.getElementById('detailsModalContent').innerHTML = content;
+      document.getElementById('detailsModal').classList.remove('hidden');
+    }
+
+    function closeDetailsModal() {
+      document.getElementById('detailsModal').classList.add('hidden');
+    }
+
+    function printSingleRecordFromModal() {
+      if (currentDetailRecord) {
+        printRecordById(currentDetailRecord.id);
+      }
+    }
+
+    // Print Receipt & Police Register Proof
+    function printRecordById(id) {
+      const rec = records.find(r => r.id === id);
+      if (!rec) return;
+
+      const printArea = document.getElementById('printArea');
+      const isSold = rec.status === 'SOLD';
+
+      printArea.innerHTML = `
+        <div style="font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; border: 2px solid #333; line-height: 1.5;">
+          
+          <!-- Store Header -->
+          <div style="text-align: center; border-bottom: 2px solid #333; padding-bottom: 12px; margin-bottom: 16px;">
+            <h2 style="margin: 0; font-size: 24px; text-transform: uppercase;">सेकंड हैंड मोबाइल खरीद व वैधानिक सत्यापन रजिस्टर</h2>
+            <p style="margin: 4px 0; font-size: 13px; color: #444;">Second-Hand Mobile Purchase & Customer KYC Form (Police Record Copy)</p>
+            <p style="margin: 0; font-size: 12px; font-weight: bold;">रजिस्टर क्रम संख्या (Ref ID): #${rec.id}</p>
+          </div>
+
+          <!-- Phone & Price Grid -->
+          <table style="width: 100%; border-collapse: collapse; margin-bottom: 16px; font-size: 13px;">
+            <tr>
+              <td colspan="2" style="background: #eee; padding: 6px; font-weight: bold; border: 1px solid #999;">1. हैंडसेट विवरण (Device Particulars)</td>
+            </tr>
+            <tr>
+              <td style="padding: 6px; border: 1px solid #999; width: 50%;"><strong>मोबाइल कंपनी व मॉडल:</strong> ${rec.brand} ${rec.model}</td>
+              <td style="padding: 6px; border: 1px solid #999; width: 50%;"><strong>स्टोरेज व रंग:</strong> ${rec.specs || 'N/A'}</td>
+            </tr>
+            <tr>
+              <td style="padding: 6px; border: 1px solid #999;"><strong>IMEI 1 (अनिवार्य):</strong> <span style="font-family: monospace; font-size: 14px; font-weight: bold;">${rec.imei1}</span></td>
+              <td style="padding: 6px; border: 1px solid #999;"><strong>IMEI 2:</strong> <span style="font-family: monospace;">${rec.imei2 || 'उपलब्ध नहीं'}</span></td>
+            </tr>
+            <tr>
+              <td style="padding: 6px; border: 1px solid #999;"><strong>खरीद मूल्य (Purchase Price):</strong> ₹${Number(rec.purchasePrice).toLocaleString('en-IN')}</td>
+              <td style="padding: 6px; border: 1px solid #999;"><strong>खरीद दिनांक (Date):</strong> ${formatDate(rec.purchaseDate)}</td>
+            </tr>
+            <tr>
+              <td colspan="2" style="padding: 6px; border: 1px solid #999;"><strong>हैंडसेट की वर्तमान स्थिति:</strong> ${rec.condition || 'सामान्य'}</td>
+            </tr>
+          </table>
+
+          <!-- Seller Information & Photos -->
+          <table style="width: 100%; border-collapse: collapse; margin-bottom: 16px; font-size: 13px;">
+            <tr>
+              <td colspan="3" style="background: #eee; padding: 6px; font-weight: bold; border: 1px solid #999;">2. विक्रेता का पहचान व केवाईसी विवरण (Seller Information)</td>
+            </tr>
+            <tr>
+              <td style="padding: 6px; border: 1px solid #999; vertical-align: top; width: 60%;">
+                <p style="margin: 4px 0;"><strong>विक्रेता का पूरा नाम:</strong> ${rec.sellerName}</p>
+                <p style="margin: 4px 0;"><strong>मोबाइल नंबर:</strong> ${rec.sellerPhone}</p>
+                <p style="margin: 4px 0;"><strong>आधार कार्ड संख्या:</strong> ${rec.sellerAadhaar}</p>
+                <p style="margin: 4px 0;"><strong>स्थायी पता:</strong> ${rec.sellerAddress}</p>
+              </td>
+              <td style="padding: 6px; border: 1px solid #999; text-align: center; width: 20%; vertical-align: top;">
+                <div style="font-size: 11px; margin-bottom: 4px; font-weight: bold;">विक्रेता का फोटो</div>
+                <img src="${rec.sellerPhoto || 'https://placehold.co/100x100?text=Photo'}" style="width: 90px; height: 100px; object-fit: cover; border: 1px solid #ccc;">
+              </td>
+              <td style="padding: 6px; border: 1px solid #999; text-align: center; width: 20%; vertical-align: top;">
+                <div style="font-size: 11px; margin-bottom: 4px; font-weight: bold;">पहचान पत्र (Aadhaar)</div>
+                <img src="${rec.sellerIdDoc || 'https://placehold.co/100x100?text=ID+Proof'}" style="width: 90px; height: 100px; object-fit: cover; border: 1px solid #ccc;">
+              </td>
+            </tr>
+          </table>
+
+          <!-- Buyer Information (if Sold) -->
+          ${isSold ? `
+          <table style="width: 100%; border-collapse: collapse; margin-bottom: 16px; font-size: 13px;">
+            <tr>
+              <td colspan="2" style="background: #eee; padding: 6px; font-weight: bold; border: 1px solid #999;">3. हैंडसेट बिक्री एवं खरीदार विवरण (Buyer Details)</td>
+            </tr>
+            <tr>
+              <td style="padding: 6px; border: 1px solid #999; width: 50%;"><strong>खरीदार का नाम:</strong> ${rec.buyerName}</td>
+              <td style="padding: 6px; border: 1px solid #999; width: 50%;"><strong>मोबाइल नंबर:</strong> ${rec.buyerPhone}</td>
+            </tr>
+            <tr>
+              <td style="padding: 6px; border: 1px solid #999;"><strong>पहचान पत्र क्रमांक:</strong> ${rec.buyerIdProof}</td>
+              <td style="padding: 6px; border: 1px solid #999;"><strong>बिक्री मूल्य व तारीख:</strong> ₹${Number(rec.salePrice).toLocaleString('en-IN')} (${formatDate(rec.saleDate)})</td>
+            </tr>
+            <tr>
+              <td colspan="2" style="padding: 6px; border: 1px solid #999;"><strong>खरीदार का पता:</strong> ${rec.buyerAddress}</td>
+            </tr>
+          </table>
+          ` : ''}
+
+          <!-- Seller Declaration / Legal Undertaking -->
+          <div style="font-size: 11px; border: 1px solid #999; padding: 8px; margin-bottom: 30px; background: #fafafa;">
+            <strong>वैधानिक स्व-घोषणा (Seller Undertaking):</strong> मैं प्रमाणित करता हूँ कि उपरोक्त विवरण एवं पहचान पत्र सत्य व सही हैं। मैं इस मोबाइल हैंडसेट (IMEI: ${rec.imei1}) का वास्तविक मालिक हूँ और यह किसी भी प्रकार की चोरी, डकैती अथवा गैरकानूनी अपराध से संबंधित नहीं है। यदि भविष्य में इस डिवाइस से संबंधित कोई पुलिस जांच या विवाद सामने आता है तो उसकी समस्त कानूनी जिम्मेदारी मेरी होगी।
+          </div>
+
+          <!-- Signature Blocks -->
+          <table style="width: 100%; text-align: center; font-size: 13px; margin-top: 40px;">
+            <tr>
+              <td style="width: 33%;">
+                <div style="border-top: 1px solid #444; width: 80%; margin: 0 auto; padding-top: 5px;">विक्रेता के हस्ताक्षर / अंगूठा</div>
+              </td>
+              <td style="width: 33%;">
+                <div style="border-top: 1px solid #444; width: 80%; margin: 0 auto; padding-top: 5px;">खरीदार के हस्ताक्षर (यदि बिका)</div>
+              </td>
+              <td style="width: 33%;">
+                <div style="border-top: 1px solid #444; width: 80%; margin: 0 auto; padding-top: 5px;">दुकानदार सील व हस्ताक्षर</div>
+              </td>
+            </tr>
+          </table>
+
+        </div>
+      `;
+
+      printArea.classList.remove('hidden');
+      window.print();
+      printArea.classList.add('hidden');
+    }
+
+    // Delete Record Handler
+    function deleteRecord(id) {
+      const target = records.find(r => r.id === id);
+      if (!target) return;
+
+      const confirmed = window.confirm(`क्या आप वाकई ${target.brand} ${target.model} (IMEI: ${target.imei1}) का रिकॉर्ड हटाना चाहते हैं?`);
+      if (confirmed) {
+        records = records.filter(r => r.id !== id);
+        saveToLocalStorage();
+        updateKPIs();
+        renderInventoryTable();
+        showToast('रिकॉर्ड सफलतापूर्वक हटा दिया गया!');
+      }
+    }
+
+    // Export Data to CSV for Store Backups
+    function exportToCSV() {
+      if (records.length === 0) {
+        showToast('एक्सपोर्ट करने के लिए कोई डेटा नहीं है');
+        return;
+      }
+
+      const headers = [
+        "Record ID",
+        "Brand",
+        "Model",
+        "Specs",
+        "IMEI 1",
+        "IMEI 2",
+        "Purchase Date",
+        "Purchase Price (INR)",
+        "Condition",
+        "Seller Name",
+        "Seller Phone",
+        "Seller Aadhaar",
+        "Seller Address",
+        "Status",
+        "Buyer Name",
+        "Buyer Phone",
+        "Buyer ID Proof",
+        "Sale Price (INR)",
+        "Sale Date",
+        "Payment Mode"
+      ];
+
+      const rows = records.map(r => [
+        `"${r.id}"`,
+        `"${r.brand}"`,
+        `"${r.model}"`,
+        `"${r.specs || ''}"`,
+        `"${r.imei1}"`,
+        `"${r.imei2 || ''}"`,
+        `"${r.purchaseDate}"`,
+        `"${r.purchasePrice}"`,
+        `"${(r.condition || '').replace(/"/g, '""')}"`,
+        `"${(r.sellerName || '').replace(/"/g, '""')}"`,
+        `"${r.sellerPhone || ''}"`,
+        `"${r.sellerAadhaar || ''}"`,
+        `"${(r.sellerAddress || '').replace(/"/g, '""')}"`,
+        `"${r.status}"`,
+        `"${(r.buyerName || '').replace(/"/g, '""')}"`,
+        `"${r.buyerPhone || ''}"`,
+        `"${r.buyerIdProof || ''}"`,
+        `"${r.salePrice || 0}"`,
+        `"${r.saleDate || ''}"`,
+        `"${r.paymentMode || ''}"`
+      ]);
+
+      let csvContent = "data:text/csv;charset=utf-8,\uFEFF" 
+        + headers.join(",") + "\n" 
+        + rows.map(e => e.join(",")).join("\n");
+
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement("a");
+      link.setAttribute("href", encodedUri);
+      link.setAttribute("download", `Mobile_Register_Backup_${new Date().toISOString().split('T')[0]}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      showToast('CSV बैकअप फाइल डाउनलोड हो गई है!');
+    }
+
+    // Interactive Toast Notification
+    function showToast(message) {
+      const toast = document.getElementById('toast');
+      const toastMsg = document.getElementById('toastMsg');
+      toastMsg.innerText = message;
+      toast.classList.remove('translate-y-20', 'opacity-0');
+      toast.classList.add('translate-y-0', 'opacity-100');
+
+      setTimeout(() => {
+        toast.classList.add('translate-y-20', 'opacity-0');
+        toast.classList.remove('translate-y-0', 'opacity-100');
+      }, 3000);
+    }
+  </script>
+</body>
+</html>
+```
